@@ -1,0 +1,76 @@
+﻿@{
+    ViewBag.Title = "Ride History";
+}
+
+<h2 class="accent-heading">Ride History</h2>
+
+@* display bookings in container *@
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            @* no bookings made *@
+            <div id="noBookingsMessage" class="alert alert-info" style="display: none;">
+                You don't have any ride history yet.
+            </div>
+            @* bookings made = retrieved from localStorage (in JS) *@
+            <div id="bookingsContainer" class="row row-cols-1 row-cols-md-2 g-4 history-page-container"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+            const container = document.getElementById("bookingsContainer");
+            const noBookingsMessage = document.getElementById("noBookingsMessage");
+
+            // if no bookings made
+            if (bookings.length === 0) {
+                noBookingsMessage.style.display = "block";
+                return;
+            }
+
+            // sort bookings oldest to newest
+            bookings.sort((a, b) => new Date(b.DateOfBooking) - new Date(a.DateOfBooking));
+
+            // populate ride history cards from localStorage
+            bookings.forEach(booking => {
+                const isSOS = booking.IsSOS === true || (booking.ServiceType && booking.ServiceType.toLowerCase().includes("s.o.s."));
+
+                const card = document.createElement("div");
+                card.className = "col";
+                /* display = different if SOS */
+                card.innerHTML = `
+                    <div class="card booking-card ${isSOS ? 'sos-card' : 'normal-card'} h-100" data-booking-id="${booking.BookingId}">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="card-title mb-0">${booking.ServiceType}</h5>
+                                ${isSOS ? '<span class="badge bg-danger">Emergency SOS</span>' : ''} 
+                            </div>
+                            <h6 class="card-subtitle mb-2 text-muted">
+                                ${new Date(booking.DateOfBooking).toLocaleDateString()}
+                            </h6>
+                            <div class="card-text">
+                                <p><strong>Patient Name:</strong> ${booking.PatientFullName}</p>
+                                <p><strong>Pick-Up Address:</strong> ${booking.PickUpAddress}</p>
+                                <p class="mb-0"><strong>Driver Name:</strong> ${booking.DriverFullName || 'N/A'}</p>
+                                <p class="mb-0"><strong>Ambulance Type:</strong> ${booking.VehicleType || 'N/A'}</p>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted">Click to view details</small>
+                        </div>
+                    </div>
+                `;
+
+                // on card click = revert to ride's booking confirmation
+                card.querySelector('.card').addEventListener('click', function() {
+                    window.location.href = '@Url.Action("BookingConfirmed", "Services")?id=' + booking.BookingId;
+                });
+
+                container.appendChild(card);
+            });
+        });
+    </script>
+}

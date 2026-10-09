@@ -1,0 +1,731 @@
+﻿@model domRescueBus.Models.ManagementViewModel
+
+@{
+    ViewBag.Title = "Management";
+}
+
+<h2 class="accent-heading">Driver and Vehicle Management</h2>
+
+@* drivers section *@
+<div class="row mb-5">
+    <div class="col-md-12">
+        <div class="card shadow-sm">
+            @* header section with add button *@
+            <div class="card-header management-card-header-drivers d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Drivers</h4>
+                <button type="button" class="btn management-add-button btn-sm" data-bs-toggle="modal" data-bs-target="#createDriverModal">
+                    <i class="bi bi-plus-circle"></i> Add New Driver
+                </button>
+            </div>
+
+            @* search driver section *@
+            <div class="card-body">
+                <form id="searchDriverForm">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" id="driverSearchName" placeholder="Driver Name">
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-select" id="driverSearchServiceType">
+                                @foreach (var service in Model.ServiceTypes)
+                                {
+                                    <option value="@service.Id">@service.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="button" class="btn btn-outline-primary me-2" id="searchDriversBtn"><i class="bi bi-search"></i> Search Drivers</button>
+                            <button type="button" class="btn btn-outline-secondary" id="clearSearchBtn"><i class="bi bi-x-circle"></i> Clear Search</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            @* list with current drivers *@
+            <div class="card-body p-0">
+                <div id="driversListContainer" class="list-group list-group-flush">
+                </div>
+                <p id="noDriversMessage" class="management-no-results-message" style="display: none;">No drivers found.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* vehicles section *@
+<div class="row mb-5">
+    <div class="col-md-12">
+        <div class="card shadow-sm">
+            @* header section with add button *@
+            <div class="card-header management-card-header-vehicles d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Vehicles</h4>
+                <button type="button" class="btn management-add-button btn-sm" data-bs-toggle="modal" data-bs-target="#createVehicleModal">
+                    <i class="bi bi-plus-circle"></i> Add New Vehicle
+                </button>
+            </div>
+
+            @* list with current vehicles *@
+            <div class="card-body p-0">
+                <div id="vehiclesListContainer" class="list-group list-group-flush">
+                </div>
+                <p id="noVehiclesMessage" class="management-no-results-message" style="display: none;">No vehicles found.</p>
+            </div>
+
+            @* footer with export vehicles button *@
+            <div class="card-footer d-flex justify-content-end">
+                <a href="@Url.Action("ExportVehicles", "Home")" class="btn export-vehicles-button">
+                    <i class="bi bi-download"></i> Export Vehicles
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* CRUD sections for driver *@
+@* create driver modal *@
+<div class="modal fade" id="createDriverModal" tabindex="-1" aria-labelledby="createDriverModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="createDriverForm">
+                <div class="modal-header management-modal-header-add-driver text-white">
+                    <h5 class="modal-title" id="createDriverModalLabel">Add New Driver</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="newDriverName" class="form-label">Driver Name</label>
+                        <input type="text" class="form-control" id="newDriverName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newDriverPhone" class="form-label">Phone Number</label>
+                        <input type="text" class="form-control" id="newDriverPhone" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newDriverServiceId" class="form-label">Service Type</label>
+                        <select class="form-select" id="newDriverServiceId" required>
+                            @foreach (var service in Model.ServiceTypes.Where(s => s.Id != 0))
+                            {
+                                <option value="@service.Id">@service.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newDriverImage" class="form-label">Driver Image</label>
+                        <select class="form-select" id="newDriverImage">
+                            <option value="~/Content/Images/driver_1.jpg">Driver 1</option>
+                            <option value="~/Content/Images/driver_2.jpg">Driver 2</option>
+                            <option value="~/Content/Images/driver_3.jpg">Driver 3</option>
+                            <option value="~/Content/Images/driver_4.jpg">Driver 4</option>
+                            <option value="~/Content/Images/driver_5.jpg">Driver 5</option>
+                            <option value="~/Content/Images/driver_6.jpg">Driver 6</option>
+                            <option value="~/Content/Images/driver_7.jpg">Driver 7</option>
+                            <option value="~/Content/Images/driver_8.jpg">Driver 8</option>
+                            <option value="~/Content/Images/driver_9.jpg">Driver 9</option>
+                            <option value="~/Content/Images/driver_10.jpg">Driver 10</option>
+                        </select>
+                        <img id="newDriverImagePreview" src="#" alt="Image Preview" class="img-thumbnail mt-2" style="max-width: 100px; max-height: 100px;">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Save Driver</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@* update driver modal *@
+<div class="modal fade" id="editDriverModal" tabindex="-1" aria-labelledby="editDriverModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="editDriverForm">
+                <div class="modal-header management-modal-header-edit-driver text-white">
+                    <h5 class="modal-title" id="editDriverModalLabel">Edit Driver</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="editDriverId">
+                    <div class="mb-3">
+                        <label for="editDriverName" class="form-label">Driver Name</label>
+                        <input type="text" class="form-control" id="editDriverName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editDriverPhone" class="form-label">Phone Number</label>
+                        <input type="text" class="form-control" id="editDriverPhone" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editDriverServiceId" class="form-label">Service Type</label>
+                        <select class="form-select" id="editDriverServiceId" required>
+                            @foreach (var service in Model.ServiceTypes.Where(s => s.Id != 0))
+                            {
+                                <option value="@service.Id">@service.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editDriverImage" class="form-label">Driver Image</label>
+                        <select class="form-select" id="editDriverImage">
+                            <option value="~/Content/Images/driver_1.jpg">Driver 1</option>
+                            <option value="~/Content/Images/driver_2.jpg">Driver 2</option>
+                            <option value="~/Content/Images/driver_3.jpg">Driver 3</option>
+                            <option value="~/Content/Images/driver_4.jpg">Driver 4</option>
+                            <option value="~/Content/Images/driver_5.jpg">Driver 5</option>
+                            <option value="~/Content/Images/driver_6.jpg">Driver 6</option>
+                            <option value="~/Content/Images/driver_7.jpg">Driver 7</option>
+                            <option value="~/Content/Images/driver_8.jpg">Driver 8</option>
+                            <option value="~/Content/Images/driver_9.jpg">Driver 9</option>
+                            <option value="~/Content/Images/driver_10.jpg">Driver 10</option>
+                        </select>
+                        <img id="editDriverImagePreview" src="#" alt="Image Preview" class="img-thumbnail mt-2" style="max-width: 100px; max-height: 100px;">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Driver</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@* delete driver modal *@
+<div class="modal fade" id="deleteDriverModal" tabindex="-1" aria-labelledby="deleteDriverModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="deleteDriverForm">
+                <div class="modal-header management-modal-header-delete-driver text-white">
+                    <h5 class="modal-title" id="deleteDriverModalLabel">Delete Driver</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="deleteDriverId">
+                    <p>Are you sure you want to delete driver "<strong id="deleteDriverName"></strong>"?</p>
+                    <div class="alert alert-warning" role="alert">
+                        This action cannot be undone.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@* create vehicle modal *@
+<div class="modal fade" id="createVehicleModal" tabindex="-1" aria-labelledby="createVehicleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="createVehicleForm">
+                <div class="modal-header management-modal-header-add-vehicle text-white">
+                    <h5 class="modal-title" id="createVehicleModalLabel">Add New Vehicle</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="newVehicleType" class="form-label">Vehicle Type</label>
+                        <input type="text" class="form-control" id="newVehicleType" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newVehicleReg" class="form-label">Registration Number</label>
+                        <input type="text" class="form-control" id="newVehicleReg" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newVehicleServiceId" class="form-label">Service Type</label>
+                        <select class="form-select" id="newVehicleServiceId" required>
+                            @foreach (var service in Model.ServiceTypes.Where(s => s.Id != 0))
+                            {
+                                <option value="@service.Id">@service.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newVehicleImage" class="form-label">Vehicle Image</label>
+                        <select class="form-select" id="newVehicleImage">
+                            <option value="~/Content/Images/vehicle_1.jpg">Vehicle 1</option>
+                            <option value="~/Content/Images/vehicle_2.jpg">Vehicle 2</option>
+                            <option value="~/Content/Images/vehicle_3.jpg">Vehicle 3</option>
+                            <option value="~/Content/Images/vehicle_4.jpg">Vehicle 4</option>
+                            <option value="~/Content/Images/vehicle_5.jpg">Vehicle 5</option>
+                            <option value="~/Content/Images/vehicle_6.jpg">Vehicle 6</option>
+                        </select>
+                        <img id="newVehicleImagePreview" src="#" alt="Image Preview" class="img-thumbnail mt-2" style="max-width: 100px; max-height: 100px;">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-info">Save Vehicle</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@* update vehicle modal *@
+<div class="modal fade" id="editVehicleModal" tabindex="-1" aria-labelledby="editVehicleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="editVehicleForm">
+                <div class="modal-header management-modal-header-edit-vehicle text-white">
+                    <h5 class="modal-title" id="editVehicleModalLabel">Edit Vehicle</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="editVehicleId">
+                    <div class="mb-3">
+                        <label for="editVehicleType" class="form-label">Vehicle Type</label>
+                        <input type="text" class="form-control" id="editVehicleType" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editVehicleReg" class="form-label">Registration Number</label>
+                        <input type="text" class="form-control" id="editVehicleReg" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editVehicleServiceId" class="form-label">Service Type</label>
+                        <select class="form-select" id="editVehicleServiceId" required>
+                            @foreach (var service in Model.ServiceTypes.Where(s => s.Id != 0))
+                            {
+                                <option value="@service.Id">@service.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editVehicleImage" class="form-label">Vehicle Image</label>
+                        <select class="form-select" id="editVehicleImage">
+                            <option value="~/Content/Images/vehicle_1.jpg">Vehicle 1</option>
+                            <option value="~/Content/Images/vehicle_2.jpg">Vehicle 2</option>
+                            <option value="~/Content/Images/vehicle_3.jpg">Vehicle 3</option>
+                            <option value="~/Content/Images/vehicle_4.jpg">Vehicle 4</option>
+                            <option value="~/Content/Images/vehicle_5.jpg">Vehicle 5</option>
+                            <option value="~/Content/Images/vehicle_6.jpg">Vehicle 6</option>
+                        </select>
+                        <img id="editVehicleImagePreview" src="#" alt="Image Preview" class="img-thumbnail mt-2" style="max-width: 100px; max-height: 100px;">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Vehicle</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@* delete vehicle modal *@
+<div class="modal fade" id="deleteVehicleModal" tabindex="-1" aria-labelledby="deleteVehicleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="deleteVehicleForm">
+                <div class="modal-header management-modal-header-delete-vehicle text-white">
+                    <h5 class="modal-title" id="deleteVehicleModalLabel">Delete Vehicle</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="deleteVehicleId">
+                    <p>Are you sure you want to delete vehicle "<strong id="deleteVehicleType"></strong>" with registration "<strong id="deleteVehicleReg"></strong>"?</p>
+                    <div class="alert alert-warning" role="alert">
+                        This action cannot be undone.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        const initialDrivers = @Html.Raw(Json.Encode(Model.Drivers));
+        const initialVehicles = @Html.Raw(Json.Encode(Model.Vehicles));
+        const serviceTypes = @Html.Raw(Json.Encode(Model.ServiceTypes.Where(s => s.Id != 0)));
+
+        /* get service Ids from service type entered */
+        function getServiceTypeName(serviceId) {
+            const service = serviceTypes.find(s => s.Id === serviceId);
+            return service ? service.Name : 'Unknown Service';
+        }
+
+        /* retrieve list of drivers from lS
+           if lS = empty -> retrieve drivers from initialDrivers (demo data) */
+        function getDriversFromLocalStorage() {
+            let drivers = JSON.parse(localStorage.getItem('drivers')) || [];
+            if (drivers.length === 0 && initialDrivers.length > 0) {
+                drivers = initialDrivers.map(d => ({ ...d, Picture: '@Url.Content("~")' + d.Picture.substring(2) }));
+                saveDriversToLocalStorage(drivers);
+            }
+            return drivers;
+        }
+
+        /* save current list of drivers to lS */
+        function saveDriversToLocalStorage(drivers) {
+            localStorage.setItem('drivers', JSON.stringify(drivers));
+            renderDrivers();
+        }
+
+        /* retrieve list of vehicles from lS
+           if lS = empty -> retrieve vehicles from initialVehicles (demo data) */
+        function getVehiclesFromLocalStorage() {
+            let vehicles = JSON.parse(localStorage.getItem('vehicles')) || [];
+            if (vehicles.length === 0 && initialVehicles.length > 0) {
+                vehicles = initialVehicles.map(v => ({ ...v, Picture: '@Url.Content("~")' + v.Picture.substring(2) }));
+                saveVehiclesToLocalStorage(vehicles);
+            }
+            return vehicles;
+        }
+
+        /* save current list of vehicles to lS */
+        function saveVehiclesToLocalStorage(vehicles) {
+            localStorage.setItem('vehicles', JSON.stringify(vehicles));
+            renderVehicles();
+        }
+
+        /* displays list of drivers in container */
+        function renderDrivers(filteredDrivers = null) {
+            const container = document.getElementById('driversListContainer');
+            const noDriversMessage = document.getElementById('noDriversMessage');
+            let driversToRender = filteredDrivers || getDriversFromLocalStorage();
+
+            container.innerHTML = '';
+
+            if (driversToRender.length === 0) {
+                noDriversMessage.style.display = 'block';
+                return;
+            } else {
+                noDriversMessage.style.display = 'none';
+            }
+
+            driversToRender.forEach(driver => {
+                const driverItem = document.createElement('div');
+                driverItem.className = 'list-group-item d-flex align-items-center py-3';
+                driverItem.innerHTML = `
+                    <img src="${driver.Picture}" alt="${driver.Name}" class="rounded-circle me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                    <div class="flex-grow-1">
+                        <h5 class="mb-1">${driver.Name}</h5>
+                        <small class="text-muted">${driver.PhoneNumber} | ${getServiceTypeName(driver.ServiceId)}</small>
+                    </div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-sm btn-outline-primary edit-driver-btn"
+                                data-bs-toggle="modal" data-bs-target="#editDriverModal"
+                                data-driver-id="${driver.Id}"
+                                data-driver-name="${driver.Name}"
+                                data-driver-phone="${driver.PhoneNumber}"
+                                data-driver-picture="${driver.Picture}"
+                                data-driver-serviceid="${driver.ServiceId}">
+                            <i class="bi bi-pencil"></i> Edit
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-danger delete-driver-btn"
+                                data-bs-toggle="modal" data-bs-target="#deleteDriverModal"
+                                data-driver-id="${driver.Id}"
+                                data-driver-name="${driver.Name}">
+                            <i class="bi bi-trash"></i> Delete
+                        </button>
+                    </div>
+                `;
+                container.appendChild(driverItem);
+            });
+        }
+
+        /* displays list of vehicles in container */
+        function renderVehicles() {
+            const container = document.getElementById('vehiclesListContainer');
+            const noVehiclesMessage = document.getElementById('noVehiclesMessage');
+            const vehiclesToRender = getVehiclesFromLocalStorage();
+
+            container.innerHTML = '';
+
+            if (vehiclesToRender.length === 0) {
+                noVehiclesMessage.style.display = 'block';
+                return;
+            } else {
+                noVehiclesMessage.style.display = 'none';
+            }
+
+            vehiclesToRender.forEach(vehicle => {
+                const vehicleItem = document.createElement('div');
+                vehicleItem.className = 'list-group-item d-flex align-items-center py-3';
+                vehicleItem.innerHTML = `
+                    <img src="${vehicle.Picture}" alt="${vehicle.Type}" class="rounded-circle me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                    <div class="flex-grow-1">
+                        <h5 class="mb-1">${vehicle.Type} <small class="text-muted">(${vehicle.RegistrationNumber})</small></h5>
+                        <small class="text-muted">${getServiceTypeName(vehicle.ServiceId)}</small>
+                    </div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-sm btn-outline-primary edit-vehicle-btn"
+                                data-bs-toggle="modal" data-bs-target="#editVehicleModal"
+                                data-vehicle-id="${vehicle.Id}"
+                                data-vehicle-type="${vehicle.Type}"
+                                data-vehicle-reg="${vehicle.RegistrationNumber}"
+                                data-vehicle-picture="${vehicle.Picture}"
+                                data-vehicle-serviceid="${vehicle.ServiceId}">
+                            <i class="bi bi-pencil"></i> Edit
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-danger delete-vehicle-btn"
+                                data-bs-toggle="modal" data-bs-target="#deleteVehicleModal"
+                                data-vehicle-id="${vehicle.Id}"
+                                data-vehicle-type="${vehicle.Type}"
+                                data-vehicle-reg="${vehicle.RegistrationNumber}">
+                            <i class="bi bi-trash"></i> Delete
+                        </button>
+                    </div>
+                `;
+                container.appendChild(vehicleItem);
+            });
+        }
+
+        /* shows preview of selected image in list available */
+        function setupImageSelectPreview(selectId, previewImgId) {
+            const selectElement = document.getElementById(selectId);
+            const previewImg = document.getElementById(previewImgId);
+
+            if (selectElement && previewImg) {
+                const updatePreview = () => {
+                    const selectedValue = selectElement.value;
+                    if (selectedValue) {
+                        previewImg.src = selectedValue;
+                        previewImg.style.display = 'block';
+                    } else {
+                        previewImg.src = '#';
+                        previewImg.style.display = 'none';
+                    }
+                };
+
+                selectElement.addEventListener('change', updatePreview);
+                updatePreview();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // initial display of drivers and vehicles
+            renderDrivers();
+            renderVehicles();
+
+            // image previews
+            setupImageSelectPreview('newDriverImage', 'newDriverImagePreview');
+            setupImageSelectPreview('editDriverImage', 'editDriverImagePreview');
+            setupImageSelectPreview('newVehicleImage', 'newVehicleImagePreview');
+            setupImageSelectPreview('editVehicleImage', 'editVehicleImagePreview');
+
+            // create driver form submission
+            document.getElementById('createDriverForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                const drivers = getDriversFromLocalStorage();
+                const newDriver = {
+                    Id: drivers.length > 0 ? Math.max(...drivers.map(d => d.Id)) + 1 : 1,
+                    Name: document.getElementById('newDriverName').value,
+                    PhoneNumber: document.getElementById('newDriverPhone').value,
+                    Picture: document.getElementById('newDriverImage').value,
+                    ServiceId: parseInt(document.getElementById('newDriverServiceId').value)
+                };
+                drivers.push(newDriver);
+                saveDriversToLocalStorage(drivers);
+                bootstrap.Modal.getInstance(document.getElementById('createDriverModal')).hide();
+                this.reset();
+            });
+
+            // display edit driver modal
+            const editDriverModal = document.getElementById('editDriverModal');
+            if (editDriverModal) {
+                editDriverModal.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    const driverId = parseInt(button.getAttribute('data-driver-id'));
+                    const driverName = button.getAttribute('data-driver-name');
+                    const driverPhone = button.getAttribute('data-driver-phone');
+                    const driverPicture = button.getAttribute('data-driver-picture');
+                    const driverServiceId = parseInt(button.getAttribute('data-driver-serviceid'));
+
+                    editDriverModal.querySelector('#editDriverId').value = driverId;
+                    editDriverModal.querySelector('#editDriverName').value = driverName;
+                    editDriverModal.querySelector('#editDriverPhone').value = driverPhone;
+                    editDriverModal.querySelector('#editDriverServiceId').value = driverServiceId;
+                    editDriverModal.querySelector('#editDriverImage').value = driverPicture;
+                    editDriverModal.querySelector('#editDriverImagePreview').src = driverPicture;
+                    editDriverModal.querySelector('#editDriverImagePreview').style.display = 'block';
+                });
+            }
+
+            // edit driver form submission
+            document.getElementById('editDriverForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                let drivers = getDriversFromLocalStorage();
+                const updatedDriver = {
+                    Id: parseInt(document.getElementById('editDriverId').value),
+                    Name: document.getElementById('editDriverName').value,
+                    PhoneNumber: document.getElementById('editDriverPhone').value,
+                    Picture: document.getElementById('editDriverImage').value,
+                    ServiceId: parseInt(document.getElementById('editDriverServiceId').value)
+                };
+
+                const index = drivers.findIndex(d => d.Id === updatedDriver.Id);
+                if (index !== -1) {
+                    drivers[index] = updatedDriver;
+                    saveDriversToLocalStorage(drivers);
+                    bootstrap.Modal.getInstance(document.getElementById('editDriverModal')).hide();
+                } else {
+                    alert('Driver not found for update.');
+                }
+            });
+
+            // display delete driver modal
+            const deleteDriverModal = document.getElementById('deleteDriverModal');
+            if (deleteDriverModal) {
+                deleteDriverModal.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    const driverId = parseInt(button.getAttribute('data-driver-id'));
+                    const driverName = button.getAttribute('data-driver-name');
+
+                    deleteDriverModal.querySelector('#deleteDriverId').value = driverId;
+                    deleteDriverModal.querySelector('#deleteDriverName').textContent = driverName;
+                });
+            }
+
+            // delete driver form submission
+            document.getElementById('deleteDriverForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                let drivers = getDriversFromLocalStorage();
+                const driverIdToDelete = parseInt(document.getElementById('deleteDriverId').value);
+
+                drivers = drivers.filter(d => d.Id !== driverIdToDelete);
+                saveDriversToLocalStorage(drivers);
+                bootstrap.Modal.getInstance(document.getElementById('deleteDriverModal')).hide();
+            });
+
+            // create vehicle form submission
+            document.getElementById('createVehicleForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                const vehicles = getVehiclesFromLocalStorage();
+                const newVehicle = {
+                    Id: vehicles.length > 0 ? Math.max(...vehicles.map(v => v.Id)) + 1 : 1,
+                    Type: document.getElementById('newVehicleType').value,
+                    RegistrationNumber: document.getElementById('newVehicleReg').value,
+                    Picture: document.getElementById('newVehicleImage').value,
+                    ServiceId: parseInt(document.getElementById('newVehicleServiceId').value)
+                };
+                vehicles.push(newVehicle);
+                saveVehiclesToLocalStorage(vehicles);
+                bootstrap.Modal.getInstance(document.getElementById('createVehicleModal')).hide();
+                this.reset();
+            });
+
+            // display edit vehicle modal
+            const editVehicleModal = document.getElementById('editVehicleModal');
+            if (editVehicleModal) {
+                editVehicleModal.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    const vehicleId = parseInt(button.getAttribute('data-vehicle-id'));
+                    const vehicleType = button.getAttribute('data-vehicle-type');
+                    const vehicleReg = button.getAttribute('data-vehicle-reg');
+                    const vehiclePicture = button.getAttribute('data-vehicle-picture');
+                    const vehicleServiceId = parseInt(button.getAttribute('data-vehicle-serviceid'));
+
+                    // Populate the form fields
+                    editVehicleModal.querySelector('#editVehicleId').value = vehicleId;
+                    editVehicleModal.querySelector('#editVehicleType').value = vehicleType;
+                    editVehicleModal.querySelector('#editVehicleReg').value = vehicleReg;
+                    editVehicleModal.querySelector('#editVehicleServiceId').value = vehicleServiceId;
+                    editVehicleModal.querySelector('#editVehicleImage').value = vehiclePicture;
+                    editVehicleModal.querySelector('#editVehicleImagePreview').src = vehiclePicture;
+                    editVehicleModal.querySelector('#editVehicleImagePreview').style.display = 'block';
+                });
+            }
+
+            // edit vehicle form submission
+            document.getElementById('editVehicleForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                let vehicles = getVehiclesFromLocalStorage();
+                const updatedVehicle = {
+                    Id: parseInt(document.getElementById('editVehicleId').value),
+                    Type: document.getElementById('editVehicleType').value,
+                    RegistrationNumber: document.getElementById('editVehicleReg').value,
+                    Picture: document.getElementById('editVehicleImage').value,
+                    ServiceId: parseInt(document.getElementById('editVehicleServiceId').value)
+                };
+
+                const index = vehicles.findIndex(v => v.Id === updatedVehicle.Id);
+                if (index !== -1) {
+                    vehicles[index] = updatedVehicle;
+                    saveVehiclesToLocalStorage(vehicles);
+                    bootstrap.Modal.getInstance(document.getElementById('editVehicleModal')).hide();
+                } else {
+                    alert('Vehicle not found for update.');
+                }
+            });
+
+            // display delete vehicle modal
+            const deleteVehicleModal = document.getElementById('deleteVehicleModal');
+            if (deleteVehicleModal) {
+                deleteVehicleModal.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    const vehicleId = parseInt(button.getAttribute('data-vehicle-id'));
+                    const vehicleType = button.getAttribute('data-vehicle-type');
+                    const vehicleReg = button.getAttribute('data-vehicle-reg');
+
+                    deleteVehicleModal.querySelector('#deleteVehicleId').value = vehicleId;
+                    deleteVehicleModal.querySelector('#deleteVehicleType').textContent = vehicleType;
+                    deleteVehicleModal.querySelector('#deleteVehicleReg').textContent = vehicleReg;
+                });
+            }
+
+            // delete vehicle form submission
+            document.getElementById('deleteVehicleForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                let vehicles = getVehiclesFromLocalStorage();
+                const vehicleIdToDelete = parseInt(document.getElementById('deleteVehicleId').value);
+
+                vehicles = vehicles.filter(v => v.Id !== vehicleIdToDelete);
+                saveVehiclesToLocalStorage(vehicles);
+                bootstrap.Modal.getInstance(document.getElementById('deleteVehicleModal')).hide();
+            });
+
+            // search driver by name/service type
+            document.getElementById('searchDriversBtn').addEventListener('click', function () {
+                const searchTerm = document.getElementById('driverSearchName').value.toLowerCase();
+                const serviceTypeId = parseInt(document.getElementById('driverSearchServiceType').value);
+
+                let filteredDrivers = getDriversFromLocalStorage();
+
+                // filter by name
+                if (searchTerm) {
+                    filteredDrivers = filteredDrivers.filter(d => d.Name.toLowerCase().includes(searchTerm));
+                }
+
+                // filter by service type
+                if (serviceTypeId !== 0) {
+                    filteredDrivers = filteredDrivers.filter(d => d.ServiceId === serviceTypeId);
+                }
+                renderDrivers(filteredDrivers);
+            });
+
+            // clear search bar and results
+            document.getElementById('clearSearchBtn').addEventListener('click', function () {
+                document.getElementById('driverSearchName').value = '';
+                document.getElementById('driverSearchServiceType').value = '0';
+                renderDrivers();
+            });
+
+            // export vehicles to txt file button
+            document.getElementById('exportVehiclesBtn').addEventListener('click', function () {
+                const vehicles = getVehiclesFromLocalStorage();
+                const serviceTypesData = @Html.Raw(Json.Encode(Model.ServiceTypes.Where(s => s.Id != 0)));
+                const sb = ["Vehicle ID,Type,Registration Number,Service Type"];
+
+                vehicles.forEach(vehicle => {
+                    const serviceTypeName = serviceTypesData.find(s => s.Id === vehicle.ServiceId)?.Name || "Unknown Service";
+                    sb.push(`${vehicle.Id},${vehicle.Type},${vehicle.RegistrationNumber},${serviceTypeName}`);
+                });
+
+                const blob = new Blob([sb.join('\n')], { type: 'text/plain;charset=utf-8' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = `Vehicles_Export_${new Date().toISOString().slice(0, 10).replace(/-/g, '')}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            });
+        });
+    </script>
+}

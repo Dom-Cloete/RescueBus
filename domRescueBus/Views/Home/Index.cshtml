@@ -1,0 +1,98 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+@* book ambulance section *@
+<div class="row g-0 mb-4">
+    <div class="col-md-9">
+        <section class="home-section-panel">
+            <h2 id="heading">Our Team is on the Way to Save your Life</h2>
+            <p>
+                Don’t worry, we’ve got you covered, we’re on the road to recovery.
+            </p>
+            <form method="post" action="@Url.Action("SelectService", "Services")" style="display:inline;">
+                <button type="submit" class="home-button">BOOK AMBULANCE</button>
+            </form>
+        </section>
+    </div>
+
+    <div class="col-md-3">
+        <section class="home-section-image">
+            <img src="~/Content/Images/ambulance.jpg" alt="Ambulance Image"/>
+        </section>
+    </div>
+</div>
+
+@* emergency section *@
+<div class="row g-0 mb-4">
+    <div class="col-md-9">
+        <section class="home-section-panel">
+            <h2 id="heading">EMERGENCY?</h2>
+            <p>
+                Press the S.O.S. BUTTON in cases of emergency.
+            </p>
+        </section>
+    </div>
+    <div class="col-md-3">
+        <section class="home-section-image">
+            <input type="image" id="sosButton" src="~/Content/Images/sos.jpg" alt="SOS Button" class="sos-button" />
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        /* populate booking confirmation page with random driver and vehicle -- save to localStorage -- on sosButton click */
+        document.addEventListener("DOMContentLoaded", function () {
+            const sosButton = document.getElementById("sosButton");
+
+            if (sosButton) {
+                sosButton.addEventListener("click", function (e) {
+                    e.preventDefault();
+
+                    const drivers = @Html.Raw(Json.Encode(ViewBag.AllDrivers));
+                    const vehicles = @Html.Raw(Json.Encode(ViewBag.AllVehicles));
+
+                    if (!drivers || drivers.length === 0) {
+                        displayMessageBox("No drivers available for emergency booking.");
+                        return;
+                    }
+                    if (!vehicles || vehicles.length === 0) {
+                        displayMessageBox("No vehicles available for emergency booking.");
+                        return;
+                    }
+
+                    const randomDriver = drivers[Math.floor(Math.random() * drivers.length)];
+                    const randomVehicle = vehicles[Math.floor(Math.random() * vehicles.length)];
+
+                    const bookingId = crypto.randomUUID();
+
+                    const booking = {
+                        BookingId: bookingId,
+                        ServiceType: "Emergency S.O.S.",
+                        PatientFullName: "Emergency Caller",
+                        PhoneNumber: "Unknown",
+                        PickUpTime: new Date().toLocaleTimeString(),
+                        DateOfBooking: new Date().toLocaleDateString(),
+                        PickUpAddress: "Undisclosed Location (S.O.S.)",
+                        DriverId: randomDriver.Id,
+                        DriverFullName: randomDriver.Name,
+                        DriverPhoneNumber: randomDriver.PhoneNumber,
+                        DriverPicture: randomDriver.Picture.replace("~", ""),
+                        VehicleId: randomVehicle.Id,
+                        VehicleType: randomVehicle.Type,
+                        VehicleRegistrationNumber: randomVehicle.RegistrationNumber,
+                        VehiclePicture: randomVehicle.Picture.replace("~", ""),
+                        IsSOS: true
+                    };
+
+                    let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+                    bookings.push(booking);
+                    localStorage.setItem("bookings", JSON.stringify(bookings));
+
+                    window.location.href = '@Url.Action("BookingConfirmed", "Services")' + "?id=" + booking.BookingId;
+                });
+            }
+        });
+    </script>
+}

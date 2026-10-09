@@ -1,0 +1,192 @@
+﻿@model domRescueBus.Models.BookingFormViewModel
+@{
+    ViewBag.Title = "MakeBooking";
+}
+
+<h2 class="mb-4" style="text-align: center;">Make a Booking</h2>
+
+@* make booking form *@
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="booking-form-container">
+            <h4 class="mb-4 accent-heading">@Model.ServiceType</h4>
+            <form id="bookingForm" method="post" action="@Url.Action("MakeBooking", "Services")">
+                <input type="hidden" id="selectedServiceId" value="@Model.ServiceTypeId" />
+
+                <div class="mb-3">
+                    <label for="nameText" class="form-label">Full Name:</label>
+                    <input type="text" id="nameText" name="PatientFullName" class="form-control" placeholder="Enter your full name..." required />
+                </div>
+
+                <div class="mb-3">
+                    <label for="numberTel" class="form-label">Phone Number:</label>
+                    <input type="tel" id="numberTel" name="PhoneNumber" class="form-control" pattern="\+27\s\d{2}\s\d{3}\s\d{4}" placeholder="+27 00 000 0000" required />
+                </div>
+
+                <div class="mb-3">
+                    <label for="pickupT" class="form-label">Pick-Up Time:</label>
+                    <input type="time" id="pickupT" name="PickUpTime" class="form-control" required />
+                </div>
+
+                <div class="mb-3">
+                    <label for="reasonText" class="form-label">Reason:</label>
+                    <input type="text" id="reasonText" name="Reason" class="form-control" placeholder="Enter the emergency reason..." required />
+                </div>
+
+                <div class="mb-3">
+                    <label for="driverDropdown" class="form-label">Driver</label>
+                    @Html.DropDownListFor(model => model.SelectedDriverId,
+                            new SelectList(Model.Drivers, "Id", "Name"),
+                            "Select a driver",
+                            new { @id = "driverDropdown", @class = "form-select" })
+                </div>
+
+                <div class="mb-3">
+                    <label for="vehicleDropdown" class="form-label">Vehicle</label>
+                    @Html.DropDownListFor(model => model.SelectedVehicleId,
+                            new SelectList(Model.Vehicles, "Id", "Type"),
+                            "Select a vehicle",
+                            new { @id = "vehicleDropdown", @class = "form-select" })
+                </div>
+
+                <div class="mb-4">
+                    <label for="addressText" class="form-label">Pick-Up Address:</label>
+                    <textarea id="addressText" name="PickUpAddress" rows="3" class="form-control" placeholder="Enter your address..."></textarea>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="booking-submit-button">Book</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        /* filter drivers and vehicles by service type */
+        $(document).ready(function () {
+            var serviceId = $("#selectedServiceId").val();
+            if (serviceId) {
+                $.get('@Url.Action("GetDriversAndVehiclesByService", "Services")', { serviceId: serviceId })
+                    .done(function (data) {
+                        var sections = data.split(";");
+                        var driverNames = sections[0].split(",");
+                        var driverIds = sections[1].split(",");
+                        var vehicleTypes = sections[2].split(",");
+                        var vehicleIds = sections[3].split(",");
+
+                        // populate driver dropdown
+                        var driverDropdown = $("#driverDropdown");
+                        driverDropdown.empty().append("<option value=''>Select a driver</option>");
+                        for (var i = 0; i < driverIds.length; i++) {
+                            driverDropdown.append($("<option>").val(driverIds[i]).text(driverNames[i]));
+                        }
+
+                        // populate vehicle dropdown
+                        var vehicleDropdown = $("#vehicleDropdown");
+                        vehicleDropdown.empty().append("<option value=''>Select a vehicle</option>");
+                        for (var i = 0; i < vehicleIds.length; i++) {
+                            vehicleDropdown.append($("<option>").val(vehicleIds[i]).text(vehicleTypes[i]));
+                        }
+                    });
+            }
+        });
+
+        /* form validation and save to localStorage */
+        const form = document.getElementById("bookingForm");
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const fullNameInput = document.getElementById("nameText");
+            const phoneInput = document.getElementById("numberTel");
+            const timeInput = document.getElementById("pickupT");
+            const reasonInput = document.getElementById("reasonText");
+            const addressInput = document.getElementById("addressText");
+            const driverInput = document.getElementById("driverDropdown");
+            const vehicleInput = document.getElementById("vehicleDropdown");
+
+            const fullName = fullNameInput.value.trim();
+            const phone = phoneInput.value.trim();
+            const time = timeInput.value;
+            const reason = reasonInput.value.trim();
+            const address = addressInput.value.trim();
+            const driverId = driverInput.value;
+            const vehicleId = vehicleInput.value;
+
+            if (!fullName) {
+                alert("Please enter the full name.");
+                fullNameInput.focus();
+                return;
+            }
+
+            if (!phone.match(/^\+27\s\d{2}\s\d{3}\s\d{4}$/)) {
+                alert("Please enter a valid South African phone number (+27 00 000 0000).");
+                phoneInput.focus();
+                return;
+            }
+
+            if (!time) {
+                alert("Please select a pickup time.");
+                timeInput.focus();
+                return;
+            }
+
+            if (!reason) {
+                alert("Please enter the emergency reason.");
+                reasonInput.focus();
+                return;
+            }
+
+            if (!address) {
+                alert("Please enter the pickup address.");
+                addressInput.focus();
+                return;
+            }
+
+            if (!driverId) {
+                alert("Please select a driver.");
+                driverInput.focus();
+                return;
+            }
+
+            if (!vehicleId) {
+                alert("Please select a vehicle.");
+                vehicleInput.focus();
+                return;
+            }
+
+            const drivers = @Html.Raw(Json.Encode(Model.Drivers));
+            const vehicles = @Html.Raw(Json.Encode(Model.Vehicles));
+
+            const driver = drivers.find(d => d.Id == driverId);
+            const vehicle = vehicles.find(v => v.Id == vehicleId);
+
+            const booking = {
+                BookingId: crypto.randomUUID(),
+                PatientFullName: fullName,
+                PhoneNumber: phone,
+                PickUpTime: time,
+                Reason: reason,
+                PickUpAddress: address,
+                DriverId: driverId,
+                DriverFullName: driver ? driver.Name : "",
+                DriverPhoneNumber: driver ? driver.PhoneNumber : "",
+                DriverPicture: driver ? driver.Picture.replace("~", "") : "",
+                VehicleId: vehicleId,
+                VehicleType: vehicle ? vehicle.Type : "",
+                VehicleRegistrationNumber: vehicle ? vehicle.RegistrationNumber : "",
+                VehiclePicture: vehicle ? vehicle.Picture.replace("~", "") : "",
+                DateOfBooking: new Date().toLocaleDateString(),
+                ServiceType: "@Model.ServiceType"
+            };
+
+            let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+            bookings.push(booking);
+            localStorage.setItem("bookings", JSON.stringify(bookings));
+
+            window.location.href = '@Url.Action("BookingConfirmed", "Services")' + "?id=" + booking.BookingId;
+
+        });
+    </script>
+}

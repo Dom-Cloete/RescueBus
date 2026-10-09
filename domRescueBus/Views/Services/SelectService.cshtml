@@ -1,0 +1,118 @@
+﻿
+@{
+    ViewBag.Title = "SelectService";
+}
+
+<h2>Select Service</h2>
+
+<section>
+    @* service options = row 1 *@
+    <div class="row row-cols-1 row-cols-md-3 g-4 mt-4">
+        <div class="col">
+            <div class="card mb-3 h-100 service-card-blue">
+                <div class="card-body">
+                    <h5 class="card-title">Advanced Life Support</h5>
+                    <p class="card-text">
+                        ALS ambulance is staffed by a Paramedic and is used to transport patients who require high level of care
+                    </p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <form method="get" action="@Url.Action("MakeBooking", "Services")" style="display:inline;">
+                        <input type="hidden" name="serviceId" value="1" /> @* assign value to each service to identify service type in controller*@
+                        <button type="submit" class="service-card-button">BOOK AMBULANCE</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card mb-3 h-100 service-card-red">
+                <div class="card-body">
+                    <h5 class="card-title">Basic Life Support</h5>
+                    <p class=" card-body">
+                        BLS ambulance is provides transport to patients who are in a non life threatening condition
+                    </p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <form method="get" action="@Url.Action("MakeBooking", "Services")" style="display:inline;">
+                        <input type="hidden" name="serviceId" value="2" />
+                        <button type="submit" class="service-card-button">BOOK AMBULANCE</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card mb-3 h-100 service-card-blue">
+                <div class="card-body">
+                    <h5 class="card-title">Patient Support</h5>
+                    <p class=" card-text">
+                        The most basic type of transport for patients requiring ambulatory support to and from the hospital
+                    </p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <form method="get" action="@Url.Action("MakeBooking", "Services")" style="display:inline;">
+                        <input type="hidden" name="serviceId" value="3" />
+                        <button type="submit" class="service-card-button">BOOK AMBULANCE</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <br />
+
+    @* service options = row 2 *@
+    <div class="row row-cols-1 row-cols-md-3 g-4 mt-4">
+        <div class="col">
+            <div class="card mb-3 h-100 service-card-red">
+                <div class="card-body">
+                    <h5 class="card-title">Medical Utility Vehicle</h5>
+                    <p class=" card-text">
+                        A state-of-the-art small of large van that is designed to facilitate the movement and transport of patients
+                    </p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <form method="get" action="@Url.Action("MakeBooking", "Services")" style="display:inline;">
+                        <input type="hidden" name="serviceId" value="4" />
+                        <button type="submit" class="service-card-button">BOOK AMBULANCE</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card mb-3 h-100 service-card-blue">
+                <div class="card-body">
+                    <h5 class="card-title">Event Medical Ambulance</h5>
+                    <p class=" card-text">
+                        Ambulances that are stationed at events, such as concerts, sports games, and festivals, to provide medical assistance
+                    </p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <form method="get" action="@Url.Action("MakeBooking", "Services")" style="display:inline;">
+                        <input type="hidden" name="serviceId" value="5" />
+                        <button type="submit" class="service-card-button">BOOK AMBULANCE</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card mb-3 h-100 service-card-red">
+                <div class="card-body">
+                    <h5 class="card-title">Air Ambulance</h5>
+                    <p class=" card-text">
+                        Air ambulance help in the transfer of patients across long distances in both emergency and non-emergency situations
+                    </p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <form method="get" action="@Url.Action("MakeBooking", "Services")" style="display:inline;">
+                        <input type="hidden" name="serviceId" value="6" />
+                        <button type="submit" class="service-card-button">BOOK AMBULANCE</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

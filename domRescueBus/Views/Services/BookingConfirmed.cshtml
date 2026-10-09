@@ -1,0 +1,121 @@
+﻿@model domRescueBus.Models.Booking
+@{
+    ViewBag.Title = "BookingConfirmed";
+}
+
+<h2 class="accent-heading">Booking Confirmed</h2>
+
+@* booking confirmation cards *@
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="booking-confirmed-container">
+
+            @* booking details section *@
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h3 class="card-title">Booking Details</h3>
+                    <p class="card-text"><strong>Booking ID: </strong> <span id="bookingId"></span></p>
+                    <p class="card-text"><strong>Date of Booking: </strong> <span id="bookingDate"></span></p>
+                    <p class="card-text"><strong>Pick-Up Address: </strong> <span id="pickUpAddress"></span></p>
+                </div>
+            </div>
+
+            @* driver details section *@
+            <div class="card mb-3">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img id="driverImg" class="img-fluid" alt="Driver Image">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h3 class="card-title">Driver Details</h3>
+                            <p class="card-text"><strong>Driver Name: </strong><span id="driverName"></span></p>
+                            <p class="card-text"><strong>Phone Number: </strong><span id="driverNumber"></span></p>
+                            <p class="card-text"><small class="text-muted">Assigned to your booking</small></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @* vehicle details section *@
+            <div class="card mb-3">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img id="vehicleImg" class="img-fluid" alt="Vehicle Image">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h3 class="card-title">Ambulance Details</h3>
+                            <p class="card-text"><strong>Ambulance Type: </strong><span id="vehicleType"></span></p>
+                            <p class="card-text"><strong>Registration Number: </strong><span id="vehicleReg"></span></p>
+                            <p class="card-text"><small class="text-muted">Prepared for dispatch</small></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @* home button *@
+            <div class="text-center">
+                <a href="@Url.Action("Index", "Home")" class="back-home-button">Back to Home</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            // find bookingId
+            const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+            if (bookings.length === 0) {
+                alert("No booking found in local storage.");
+                return;
+            }
+
+            const id = getQueryParam("id");
+            if (!id) {
+                alert("Booking ID missing from URL. Cannot display booking details.");
+                return;
+            }
+
+            const booking = bookings.find(b => b.BookingId === id);
+            if (!booking) {
+                alert("Booking not found in local storage for the given ID.");
+                return;
+            }
+
+            // display booking info
+            document.getElementById("bookingId").textContent = booking.BookingId;
+            document.getElementById("bookingDate").textContent = booking.DateOfBooking;
+            document.getElementById("pickUpAddress").textContent = booking.PickUpAddress;
+
+            // display driver info
+            document.getElementById("driverName").textContent = booking.DriverFullName || "N/A";
+            document.getElementById("driverNumber").textContent = booking.DriverPhoneNumber || "N/A";
+            const driverImg = document.getElementById("driverImg");
+            if (booking.DriverPicture) {
+                driverImg.src = booking.DriverPicture;
+                driverImg.alt = booking.DriverFullName || "Driver Image";
+            } else {
+                driverImg.alt = "Default Driver Image";
+            }
+
+            // display vehicle info
+            document.getElementById("vehicleType").textContent = booking.VehicleType || "N/A";
+            document.getElementById("vehicleReg").textContent = booking.VehicleRegistrationNumber || "N/A";
+            const vehicleImg = document.getElementById("vehicleImg");
+            if (booking.VehiclePicture) {
+                vehicleImg.src = booking.VehiclePicture;
+                vehicleImg.alt = booking.VehicleType || "Vehicle Image";
+            } else {
+                vehicleImg.alt = "Default Vehicle Image";
+            }
+        });
+    </script>
+}

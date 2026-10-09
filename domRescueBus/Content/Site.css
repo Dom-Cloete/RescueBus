@@ -1,0 +1,569 @@
+﻿/* main styling */
+.body-content {
+    margin-top: 15px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+input,
+select,
+textarea {
+    max-height:100%;
+}
+
+body {
+    background-color: #5a6268;
+    color: #f8f9fa;
+}
+
+.accent-heading {
+    text-align: center;
+    font-weight: bold;
+}
+
+/* nav bar */
+.navbar-light-custom {
+    background-color: #f8f9fa !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+    .navbar-light-custom .navbar-brand,
+    .navbar-light-custom .nav-link {
+        color: #212529 !important;
+    }
+
+        .navbar-light-custom .nav-link:hover,
+        .navbar-light-custom .nav-link:focus {
+            color: #007bff !important;
+        }
+
+/* cards */
+.card {
+    background-color: #495057;
+    border: 1px solid rgba(0,0,0,.125);
+    border-radius: .25rem;
+    color: #f8f9fa;
+}
+
+.card-header.bg-success,
+.card-header.bg-info,
+.card-header.bg-primary,
+.card-header.bg-danger {
+    color: #fff !important;
+}
+
+/* home page */
+.home-section-panel {
+    background-color: #fff;
+    padding: 2rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    min-height: 250px;
+    color: #212529;
+}
+
+    .home-section-panel h2 {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        font-weight: bold;
+    }
+
+    .home-section-panel p {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+.home-section-image {
+    background-color: #dcdcdd;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    min-height: 250px;
+    overflow: hidden;
+    padding: 0;
+}
+
+    .home-section-image img {
+        width: 100%;
+        height: 75%;
+        object-fit: cover;
+        display: block;
+    }
+
+.home-button {
+    background-color: #007bff;
+    color: #fff;
+    border: 2px solid #007bff;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: .25rem;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+    .home-button:hover,
+    .home-button:focus {
+        background-color: #0056b3;
+        border-color: #0056b3;
+        cursor: pointer;
+    }
+
+.sos-button {
+    width: 150px;
+    height: 150px;
+    border: none;
+    background: none;
+    display: block;
+    object-fit: contain;
+    transition: transform 0.2s ease-in-out;
+}
+
+    .sos-button:hover {
+        transform: scale(1.05);
+    }
+
+/* service page */
+.service-card-blue {
+    border-left: 5px solid #007bff;
+}
+
+.service-card-red {
+    border-left: 5px solid #dc3545;
+}
+
+.service-card-button {
+    background-color: #007bff;
+    color: #fff;
+    border: 1px solid #007bff;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: .25rem;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    width: 100%;
+}
+
+    .service-card-button:hover,
+    .service-card-button:focus {
+        background-color: #0056b3;
+        border-color: #0056b3;
+        cursor: pointer;
+    }
+
+/* booking page */
+.booking-form-container {
+    background-color: #f8f9fa;
+    padding: 30px;
+    border-radius: .5rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    color: #212529;
+}
+
+    .booking-form-container .form-label {
+        font-weight: bold;
+        color: #343a40;
+    }
+
+    .booking-form-container .form-control {
+        background-color: #e9ecef;
+        border: 1px solid #ced4da;
+        color: #212529;
+        border-radius: .25rem;
+        padding: .375rem .75rem;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+        .booking-form-container .form-control:focus {
+            background-color: #fff;
+            border-color: #80bdff;
+            outline: 0;
+            box-shadow: 0 0 0 .25rem rgba(0, 123, 255, .25);
+        }
+
+.booking-submit-button {
+    background-color: #dc3545;
+    color: #fff;
+    border: 1px solid #dc3545;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: .25rem;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    width: 100%;
+}
+
+    .booking-submit-button:hover,
+    .booking-submit-button:focus {
+        background-color: #c82333;
+        border-color: #bd2130;
+        cursor: pointer;
+    }
+
+/* booking confirmed page*/
+.booking-confirmed-container {
+    background-color: #f8f9fa;
+    padding: 30px;
+    border-radius: .5rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    color: #212529;
+}
+
+    .booking-confirmed-container .card {
+        background-color: #e9ecef;
+        color: #212529;
+        border: 1px solid #dc3545;
+        border-radius: .5rem;
+        box-shadow: none;
+    }
+
+    .booking-confirmed-container .card-title {
+        color: #343a40;
+        margin-bottom: 1rem;
+    }
+
+    .booking-confirmed-container .card-text {
+        color: #495057;
+    }
+
+    .booking-confirmed-container .text-muted {
+        color: #6c757d !important;
+    }
+
+    .booking-confirmed-container .col-md-4 {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 15px;
+    }
+
+    .booking-confirmed-container .img-fluid {
+        max-width: 150px;
+        max-height: 150px;
+        width: auto;
+        height: auto;
+        object-fit: cover;
+        border-radius: 25%;
+        display: block;
+    }
+
+    .booking-confirmed-container .card-body {
+        padding: 1.25rem;
+    }
+
+    .booking-confirmed-container .back-home-button {
+        background-color: #007bff;
+        color: #fff;
+        border: 1px solid #007bff;
+        padding: 10px 20px;
+        font-size: 1rem;
+        font-weight: bold;
+        border-radius: .25rem;
+        text-transform: uppercase;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 1.5rem;
+    }
+
+        .booking-confirmed-container .back-home-button:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+
+/* history page */
+.booking-card {
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    border: 1px solid #007bff;
+    height: 100%;
+}
+
+    .booking-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.25);
+    }
+
+.history-page-container .card {
+    background-color: #495057;
+    color: #f8f9fa;
+    border: 1px solid #007bff;
+    border-radius: .5rem;
+}
+
+.history-page-container .card-body {
+    padding: 1.25rem;
+}
+
+.history-page-container .card-title {
+    color: #f8f9fa;
+    font-weight: bold;
+    margin-bottom: .75rem;
+}
+
+.history-page-container .card-subtitle.text-muted {
+    color: #ced4da !important;
+    margin-bottom: 1rem;
+}
+
+.history-page-container .card-text {
+    color: #e9ecef;
+}
+
+    .history-page-container .card-text strong {
+        color: #f8f9fa;
+    }
+
+.history-page-container .badge {
+    padding: .5em .75em;
+    font-size: 0.85em;
+    font-weight: 600;
+}
+
+.sos-card {
+    border-left: 5px solid #dc3545;
+}
+
+.normal-card {
+    border-left: 5px solid #007bff;
+}
+
+.history-page-container .card-footer {
+    background-color: #343a40;
+    border-top: 1px solid rgba(0,0,0,.2);
+    color: #ced4da;
+}
+
+.history-page-container .alert-info {
+    background-color: #e0efff;
+    color: #084298;
+    border-color: #bee5eb;
+    text-align: center;
+    padding: 1rem;
+    border-radius: .25rem;
+}
+
+/* management page */
+.management-card-header-drivers {
+    background-color: #dc3545 !important;
+    color: #fff !important;
+}
+
+.management-card-header-vehicles {
+    background-color: #007bff !important;
+    color: #fff !important;
+}
+
+.management-add-button {
+    background-color: transparent;
+    color: #212529;
+    border: 1px solid #212529;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    border-radius: .25rem;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+    .management-add-button:hover {
+        background-color: #f8f9fa;
+        color: #212529;
+        border-color: #212529;
+    }
+
+.export-vehicles-button {
+    background-color: #007bff;
+    color: #fff;
+    border: 1px solid #007bff;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: .25rem;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+}
+
+    .export-vehicles-button i {
+        margin-right: 0.5rem;
+    }
+
+    .export-vehicles-button:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }
+
+.management-list-group-item {
+    background-color: #e9ecef;
+    color: #212529;
+    border-color: #dee2e6;
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1.25rem;
+}
+
+    .management-list-group-item:nth-child(even) {
+        background-color: #f8f9fa;
+    }
+
+    .management-list-group-item .item-content {
+        flex-grow: 1;
+    }
+
+    .management-list-group-item .item-actions .btn {
+        margin-left: 0.5rem;
+    }
+
+    .management-list-group-item img {
+        max-width: 60px;
+        height: auto;
+        border-radius: 50%;
+        margin-right: 1rem;
+        border: 2px solid #007bff;
+    }
+
+.management-no-results-message {
+    background-color: #e0efff;
+    color: #084298;
+    border-color: #bee5eb;
+    text-align: center;
+    padding: 1rem;
+    border-radius: .25rem;
+    margin: 1rem;
+}
+
+.management-modal-header-add-driver,
+.management-modal-header-delete-driver {
+    background-color: #dc3545 !important;
+    color: #fff !important;
+}
+
+.management-modal-header-edit-driver {
+    background-color: #007bff !important;
+    color: #fff !important;
+}
+
+.management-modal-header-add-vehicle,
+.management-modal-header-delete-vehicle {
+    background-color: #007bff !important;
+    color: #fff !important;
+}
+
+.management-modal-header-edit-vehicle {
+    background-color: #dc3545 !important;
+    color: #fff !important;
+}
+
+.modal-content {
+    background-color: #495057;
+    color: #f8f9fa;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: .5rem;
+}
+
+    .modal-content .form-label {
+        color: #ced4da;
+    }
+
+    .modal-content .form-control,
+    .modal-content .form-select {
+        background-color: #343a40;
+        border-color: #6c757d;
+        color: #f8f9fa;
+    }
+
+        .modal-content .form-control::placeholder {
+            color: #adb5bd;
+            opacity: 1;
+        }
+
+        .modal-content .form-control:focus,
+        .modal-content .form-select:focus {
+            background-color: #212529;
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, .25);
+            color: #f8f9fa;
+        }
+
+    .modal-content .btn-close-white {
+        filter: invert(1) grayscale(100%) brightness(200%);
+    }
+
+    .modal-content .modal-footer {
+        border-top: 1px solid rgba(0, 0, 0, 0.2);
+        background-color: #343a40;
+    }
+
+    .modal-content .btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+        color: #fff;
+    }
+
+        .modal-content .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+        }
+
+    .modal-content .btn-success {
+        background-color: #28a745;
+        border-color: #28a745;
+        color: #fff;
+    }
+
+        .modal-content .btn-success:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+
+    .modal-content .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        color: #fff;
+    }
+
+        .modal-content .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004b9e;
+        }
+
+    .modal-content .btn-info {
+        background-color: #17a2b8;
+        border-color: #17a2b8;
+        color: #fff;
+    }
+
+        .modal-content .btn-info:hover {
+            background-color: #138496;
+            border-color: #117a8b;
+        }
+
+    .modal-content .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+        color: #fff;
+    }
+
+        .modal-content .btn-danger:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+        }
+
+.modal-body .img-thumbnail {
+    border: 1px solid #6c757d;
+    background-color: #343a40;
+    padding: 0.25rem;
+}
