@@ -7,7 +7,7 @@ Built for INF 272 at the University of Pretoria.
 ## Features
 
 - **SOS button**: books an emergency ride straight from the home page.
-- **Book a service**: choose a service type, then pick from the drivers and vehicles assigned to that service. The lists load dynamically for the selected service.
+- **Book a service**: choose a service type (Advanced Life Support, Basic Life Support, Patient Support, Medical Utility Vehicle, Event Medical Ambulance or Air Ambulance), then pick from the drivers and vehicles assigned to that service. The lists load dynamically for the selected service.
 - **Booking confirmation**: shows the booking details with the driver's and vehicle's photos.
 - **Ride history**: lists past bookings as cards, with SOS bookings highlighted.
 - **Management**: view all drivers, vehicles and service types, and export the vehicle list to a text file.
